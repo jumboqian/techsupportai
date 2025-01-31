@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from html2text import HTML2Text
 import json
 from typing import Optional
-from bing_userguides import search_and_scrape_userguides
+# from bing_userguides import search_and_scrape_userguides
 import os
 from dotenv import load_dotenv
 
@@ -113,17 +113,16 @@ def search_and_get_content(product: str, problem: str) -> str:
     
     # Search KB articles
     search_results = bing_custom_search(query)
-    print(search_results)
-
-    try:
-        guide_content, _ = search_and_scrape_userguides(product, BING_SUBSCRIPTION_KEY)
-        content = []
-        if guide_content:
-            content.append("## From Product Manual\n\n")
-            content.append(f"{guide_content}\n\n---\n\n")
-    except Exception as e:
-        print(f"Error fetching user guide content: {e}")
-        content = []
+    
+    # try:
+    #     guide_content, _ = search_and_scrape_userguides(product, BING_SUBSCRIPTION_KEY)
+    #     content = []
+    #     if guide_content:
+    #         content.append("## From Product Manual\n\n")
+    #         content.append(f"{guide_content}\n\n---\n\n")
+    # except Exception as e:
+    #     print(f"Error fetching user guide content: {e}")
+    #     content = []
     
 
     if not search_results or "webPages" not in search_results:
