@@ -1,0 +1,8 @@
+streamlit
+openai
+requests
+beautifulsoup4
+selenium
+html2text
+azure-identity
+python-dotenv
