@@ -113,7 +113,7 @@ def search_and_get_content(product: str, problem: str) -> str:
     
     # Search KB articles
     search_results = bing_custom_search(query)
-    
+
     # try:
     #     guide_content, _ = search_and_scrape_userguides(product, BING_SUBSCRIPTION_KEY)
     #     content = []
@@ -151,6 +151,9 @@ def search_and_get_content(product: str, problem: str) -> str:
                 content.append(f"**Answer:** {article_data['answer']}\n\n")
                 content.append(f"*Last updated: {article_data['last_edit_date']}*\n\n")
                 content.append(f"[Source]({url})\n\n---\n\n")
+
+    print(f"✅ Scrape Content Complete")
+
 
     return "".join(content) if content else "No relevant articles found."
 
@@ -291,7 +294,8 @@ if "thread_id" not in st.session_state:
 st.set_page_config(page_title="Shure Support Assistant", page_icon=":headphones:")
 
 # Display the Shure logo
-st.image("Shure Logo.png", width=150)
+st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Shure_Logo_2024.svg/2560px-Shure_Logo_2024.svg.png", width=300)
+
 
 st.title("Shure Support Assistant")
 st.write("Welcome! I'm here to help you with your Shure products. How can I assist you today?")
@@ -317,22 +321,30 @@ for message in st.session_state.messages:
 
 # Chat input and processing
 if prompt := st.chat_input("How can I help you with your Shure product today?"):
+    # Input Capture and Display
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar="👩‍🎨"):
         st.markdown(prompt)
+    print("✅ User input captured and displayed")
 
+    # Create Message in Thread
     client.beta.threads.messages.create(
         thread_id=st.session_state.thread_id,
         role="user",
         content=prompt
     )
+    print(f"✅ Message added to thread {st.session_state.thread_id}")
 
+    # Create and Start Run
     run = client.beta.threads.runs.create(
         thread_id=st.session_state.thread_id,
         assistant_id=assistant.id,
         instructions=instructions
     )
+    print(f"✅ Run created with ID: {run.id}")
 
+    # Process Response
+    print("⏳ Starting response processing...")
     poll_run_till_completion(
         client=client,
         thread_id=st.session_state.thread_id,
@@ -340,5 +352,6 @@ if prompt := st.chat_input("How can I help you with your Shure product today?"):
         available_functions=available_functions,
         verbose=verbose_output
     )
+    print("✅ Response processing completed")
 
 
