@@ -6,3 +6,8 @@ selenium
 html2text
 azure-identity
 python-dotenv
+requests-html
+nest-asyncio
+gunicorn
+webdriver-manager
+chromedriver-autoinstaller
