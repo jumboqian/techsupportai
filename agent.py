@@ -14,8 +14,10 @@ import json
 from typing import Optional
 from bing_userguides import search_and_scrape_userguides
 import os
+from dotenv import load_dotenv
 
-
+# Load environment variables from .env file
+load_dotenv()
 
 # Configuration
 BING_SUBSCRIPTION_KEY = os.getenv('BING_SUBSCRIPTION_KEY')
