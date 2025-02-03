@@ -4,7 +4,6 @@ from openai import AzureOpenAI
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,6 +14,8 @@ from typing import Optional
 from bing_userguides import search_and_scrape_userguides
 import os
 from dotenv import load_dotenv
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
 # Load environment variables from .env file
 load_dotenv()
@@ -57,15 +58,30 @@ def convert_html_to_markdown(html_content):
 
 def scrape_article(url):
     """Scrape content from a Shure knowledge base article"""
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options = webdriver.ChromeOptions()
+    # Use the new headless mode flag
+    chrome_options.add_argument("--headless=new")
+    # Additional performance and security options
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--disable-gpu")  # Add this for cloud compatibility
-    chrome_options.binary_location = os.getenv("GOOGLE_CHROME_BIN")  # For Heroku
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-infobars")
+    chrome_options.add_argument("--disable-notifications")
+    # Set window size for consistent rendering
+    chrome_options.add_argument("--window-size=1920,1080")
+    # Add user agent to avoid detection
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    
+    try:
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(30)  # Set page load timeout
+    except Exception as e:
+        print(f"Failed to initialize Chrome driver: {str(e)}")
+        return {"error": f"Failed to initialize Chrome driver: {str(e)}"}
 
     try:
-        driver = webdriver.Chrome(options=chrome_options)
         driver.get(url)
 
         wait = WebDriverWait(driver, 10)
