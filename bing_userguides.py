@@ -1,4 +1,4 @@
-from requests_html import HTMLSession
+# from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import requests
